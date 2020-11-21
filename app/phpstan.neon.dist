@@ -1,0 +1,12 @@
+parameters:
+    level: max
+    paths: [src]
+    excludes_analyse:
+        - %currentWorkingDirectory%/src/Migrations/*
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+    # Temporary disable strict typehinting
+    ignoreErrors:
+        - '#has no typehint specified#'
+        - '#has no return typehint specified#'
+        - '#with no typehint specified#'
