@@ -1,0 +1,5 @@
+/.idea
+/.env
+/.gradle
+/.php_cs.cache
+/.process_commit

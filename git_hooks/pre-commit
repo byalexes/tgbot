@@ -1,0 +1,44 @@
+#!/bin/bash
+
+echo -e "\033[34m"
+echo -e "================================="
+echo -e "Pre-commit hook  "
+echo -e "================================="
+echo -e "\033[0m"
+
+echo -e "\033[32m"
+echo -e "🚀 Run PHPStan"
+echo -e "\033[0m"
+
+if [ -f "app/phpstan.neon" ]; then
+    # For phpstan 0.12.x version and sf5
+    phpstan_cmd="docker-compose exec -T app ./vendor/bin/phpstan analyse -c phpstan.neon"
+
+    echo $phpstan_cmd
+
+    eval $phpstan_cmd
+
+    ret=$?
+    if [ $ret -ne 0 ]; then
+        exit $ret
+    fi
+else
+    echo "Warning: PHPStan config file not found. Skip static analysis"
+fi
+
+files=`git diff --cached --name-only --diff-filter=AMCR *.php`
+if [ -z $files ]; then
+    exit 0
+fi
+cs_fixer_cmd="app/vendor/friendsofphp/php-cs-fixer/php-cs-fixer --verbose --config=app/.php_cs fix $files"
+
+echo -e "\033[32m"
+echo -e "🚀 Code style fixer"
+echo -e "\033[0m"
+
+touch .process_commit
+
+echo $cs_fixer_cmd
+eval $cs_fixer_cmd
+
+exit $?
